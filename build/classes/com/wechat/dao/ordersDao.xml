@@ -1,0 +1,170 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wechat.dao.ordersDao">
+
+	<!-- 查询购物车的信息 -->
+	<select id="getorders_item" parameterType="java.util.List"
+		resultType="Map">
+		select
+		sc.*,u.nickName,bc.color_name,bs.short_size,bg.price,f.pic,bg.goodsLabel
+		from b_shoppingcart sc
+		INNER JOIN u_user u on sc.u_id = u.openid
+		inner
+		join b_color bc on bc.short_color_id= sc.colorId
+		inner join b_size bs
+		on bs.fieldname= sc.Filed and bs.short_size_class =sc.size_class
+		INNER
+		JOIN b_goods bg on bg.style_id = sc.goods_id
+		inner join f002 f on
+		f.Filed=sc.Filed and f.Goods_NO = sc.goods_id and f.Size_class =
+		sc.size_class and f.ColorID =sc.colorId
+		where sc.id in
+		<foreach item="id" collection="list" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+		GROUP BY goods_id,colorId
+	</select>
+
+	<select id="get_allf002data" resultType="Map">
+		select
+		bg.*,f.Quantity,f.pic from f002 f
+		inner join b_goods bg on
+		f.Goods_NO=bg.style_id
+		GROUP BY Goods_NO
+	</select>
+	<!--后台查找订单表 可以根据订单编号 -->
+	<select id="get_orderbyid" resultType="Orders">
+		select * from r_order
+		where orderId like CONCAT(CONCAT('%',#{arg0}),'%')
+	</select>
+
+	<select id="getinstallgoumai" resultType="Map">
+		select * from f002 f
+		inner join b_goods bg on f.Goods_NO = bg.style_id
+		where
+		f.Goods_NO=#{arg0} and Filed=#{arg1} and Size_class=#{arg2} and
+		ColorID=#{arg3}
+	</select>
+
+
+
+	<select id="getordersitem" resultType="Map">
+		select
+		bc.color_name,f.pic,bs.short_size,
+		oi.id,oi.orderId,oi.userId,oi.totalmoney,oi.orderstatus,oi.create_time,
+		roi.goods_id,roi.order_id,roi.num,bg.goodslabel,bg.price from r_order
+		oi INNER JOIN r_order_item roi
+		on oi.orderId =roi.order_id inner join
+		b_goods bg on bg.style_id
+		=roi.goods_id
+		inner join b_color bc on
+		bc.short_color_id = roi.ColorID
+		inner join b_size bs on
+		bs.fieldname=roi.Filed and bs.short_size_class =
+		roi.Size_class
+		inner
+		join f002 f on f.Goods_NO =roi.goods_id and f.ColorID=roi.ColorID and
+		f.Filed=roi.Filed and
+		f.Size_class =roi.Size_class
+		where
+		oi.userId=#{args0}
+	</select>
+
+	<select id="getorderbyoid" resultType="Map"><!-- 根据订单id获取订单款明细 -->
+		select bc.color_name,f.pic,bs.short_size,f.ColorID,f.Filed,
+		oi.id,oi.orderId,oi.userId,oi.totalmoney,oi.orderstatus,oi.create_time,
+		roi.goods_id,roi.order_id,roi.num,bg.goodslabel,bg.price from r_order
+		oi INNER JOIN r_order_item roi
+		on oi.orderId =roi.order_id inner join
+		b_goods bg on bg.style_id
+		=roi.goods_id
+		inner join b_color bc on
+		bc.short_color_id = roi.ColorID
+		inner join b_size bs on
+		bs.fieldname=roi.Filed and bs.short_size_class =
+		roi.Size_class
+		inner
+		join f002 f on f.Goods_NO =roi.goods_id and f.ColorID=roi.ColorID and
+		f.Filed=roi.Filed and
+		f.Size_class =roi.Size_class
+		where
+		oi.orderId=#{args0}
+	</select>
+	
+	<select id="getaddress" resultType="Order_delivery">
+		select * from r_order_delivery where orderid=#{orderid}
+	</select>	
+
+	<!-- 插入到订单明细表 -->
+	<insert id="insertgoodsitem" parameterType='java.util.List'>
+		insert into
+		r_order_item(goods_id,order_id,num,Filed,Size_class,ColorID) VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.goods_id},#{item.order_id},#{item.num},#{item.Filed},#{item.Size_class},#{item.ColorID})
+		</foreach>
+	</insert>
+
+	<!-- 插入數據到r_order表 订单表 -->
+	<insert id="insert_orders" parameterType="Orders">
+		insert into r_order
+		(orderId,userId,totalmoney,orderstatus) VALUES
+		(#{orderId},#{userId},#{totalmoney},#{orderstatus})
+	</insert>
+
+
+	<update id="update_orderstatus" parameterType="Orders">
+		update r_order SET
+		orderstatus=#{orderstatus} where orderId=#{orderId}
+	</update>
+
+
+	<update id="update_orderkuaidi" parameterType="Orders">
+		update r_order SET
+		logistics_code=#{logistics_code}
+		,express_company=#{express_company},short_express_company=#{short_express_company},orderstatus=#{orderstatus}
+		where orderId=#{orderId}
+	</update>
+
+	<update id="update_xiaoliang" parameterType='goods'>
+		update b_goods SET
+		sales_volume=sales_volume + #{sales_volume} where style_id=#{style_id}
+	</update>
+
+
+	<select id="getorderbytype" resultType="Map">
+		select * from r_order
+		where orderstatus=#{args0}
+	</select>
+
+
+
+	<update id="update_closetime" parameterType='Orders'>
+	update r_order SET
+	close_time=#{close_time}
+	where orderId=#{orderId}
+	
+	</update>
+
+	<delete id="delete_orderdelivery" parameterType="String">
+		DELETE FROM r_order_delivery
+		where orderid = #{orderId};
+	</delete>
+	
+	<delete id="delete_orderdetail">
+		DELETE FROM
+		r_order_item where order_id = #{orderId};
+	</delete>
+	
+	<delete id="delete_order">
+		DELETE FROM r_order where
+		orderId = #{orderId};
+	</delete>
+
+	<!-- <select id="get_somegoods" parameterType="String" resultType="goods"> 
+		select * from b_goods where goodsLabel like CONCAT(CONCAT('%',#{arg0}),'%') 
+		</select> <update id="update_basicgoods" parameterType="goods"> update b_goods 
+		SET type=#{type},goodsLabel=#{goodsLabel},goodsDetails=#{goodsDetails},goodspic=#{goodspic},yearseason=#{yearseason}, 
+		isnew=#{isnew},sex=#{sex},price=#{price} where style_id=#{style_id} </update> -->
+</mapper>

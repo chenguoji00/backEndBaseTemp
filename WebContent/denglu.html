@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>登录页面</title>
+		<link rel="stylesheet" href="themes/Bootstrap.css">
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile.structure-1.4.0.min.css" />
+		<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
+
+<script> 
+   $(document).ready(function(){
+	   $("#goback").click(function () {
+			window.location.href = "http://localhost:8080/aip_wechat/home_index.html";	
+		})
+		$("#tuichu").click(function () {
+			alert("退出成功咯!!!");
+			localStorage.setItem("isadmin", 0);
+		})
+	   $( "#denglu" ).click(function(){
+		   
+		    
+		        $.ajax({
+		         type: "GET",
+		         url: "/aip_wechat/isadmintest",
+		         data: {account:$("#account").val(),
+			        	password:$("#password").val(),},
+		         dataType: "json",
+		         success: function(data){
+		                    console.log(data,"这是提交登录的地方哦");
+		                  }
+		        });
+ 
+		   
+		   
+		   
+		   
+		   
+		   
+		   
+		   
+		   
+		   /* $.ajax({
+		        url: "/aip_wechat/isadmintest",
+		        type: 'POST',
+		        data: {account:$("#account").val(),
+		        	password:$("#password").val(),},
+		  			contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+		        dataType: 'json',
+		        success: function(result){
+		            if(result.length!=0){
+		            	alert("登录成功")
+		            	localStorage.setItem("isadmin", 1);
+		            	window.location.href = "http://localhost:8080/aip_wechat/home_index.html";	         	
+		            }else{
+		            	alert("你不是管理员哦！！！")
+		            	localStorage.setItem("isadmin", 0);
+		            }
+		        },
+		        error:function (result) {
+		           console.log("error="+result);
+		            alert("error="+result);
+		        },
+		        fail:function (result) {
+		            console.log("fail"+result);
+		            alert("fail="+result);
+		        }
+		    }); */
+		});
+	  
+   }) 
+  </script>
+  <style type="text/css">
+p {
+font-size: 1.5em;
+font-weight: bold;
+}
+#submit{
+float:center; margin:10px;
+}
+/*#toregist{
+float:left; margin:10px;
+}*/
+</style>
+</head>
+<body>
+
+<div data-role="page" data-theme="a">
+			<div data-role="header" data-position="inline">
+				<h1>登陆</h1>
+				<span id="goback"> 返回</span><span style="float:right;" id="tuichu"> 退出</span>
+			</div>
+			<div data-role="content" data-theme="a">
+				<form method="post" id="loginform">
+					<label for="fname">账号：</label>
+					<input type="text" name="username" id="account" value=""/><br>
+					<label for="fname">密码：</label>
+					<input type="password" name="password" id="password" value=""/>
+					<!--<a href="register.html" data-role="button" id="toregist" data-theme="e">注册</a>-->
+					<a data-role="button" id="denglu">登录</a>
+					</form>
+			</div>
+		</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wechat.dao.goodsDao">
+
+
+	<!-- 查询所有商品信息  限制前四条显示 -->
+	<select id="select_Allgoods" resultType="goods">
+		<!-- select MIN(g.style_id) as style_id, MIN(g.type) as type,MIN(g.goodsDetails)
+		as goodsDetails,MIN(g.goodsLabel) as goodsLabel
+		,MIN(g.goodsName) as goodsName,MIN(g.goodspic) as goodspic,
+		MIN(g.isnew) as isnew,MIN(g.price) as price,MIN(g.sex) as sex,MIN(f.Quantity) as
+		Quantity,MIN(s.short_size) as short_size,MIN(c.color_name) as
+		color_name from f002 f
+		inner join b_goods g on f.Goods_NO = g.style_id
+		INNER join b_color c on f.ColorID=c.short_color_id
+		inner join b_size s on s.short_size_class = f.Size_class
+
+		GROUP BY style_id limit 0,4 -->
+		select * from b_goods ORDER BY sales_volume desc LIMIT 0,6
+	</select>
+	
+	<!-- 分类查询  男女鞋包分类和是否新款  -->
+	<select id="select_bygoods" resultType="goods">
+		select MIN(g.style_id) as style_id,g.short_goodslabel, MIN(g.type) as type,MIN(g.goodsDetails)
+		as goodsDetails,MIN(g.goodsLabel) as goodsLabel
+		,MIN(g.goodsName) as goodsName,MIN(g.goodspic) as goodspic,
+		MIN(g.isnew) as isnew,MIN(g.price) as price,MIN(g.sex) as sex,MIN(f.Quantity) as
+		Quantity,MIN(s.short_size) as short_size,MIN(c.color_name) as
+		color_name from f002 f
+		inner join b_goods g on f.Goods_NO = g.style_id
+		INNER join b_color c on f.ColorID=c.short_color_id
+		inner join b_size s on s.short_size_class = f.Size_class
+		where 1=1 
+		<if test="arg0!= '' and arg0.trim()!=''">
+		and g.sex like CONCAT(CONCAT('%',#{arg0}),'%')
+		</if>
+		<if test="arg1!='' and arg1.trim()!=''">
+		and isnew=#{arg1}
+		</if>
+		<if test="arg2!='' and arg2.trim()!=''">
+		and g.goodsName like CONCAT(CONCAT('%',#{arg2}),'%')
+		</if>
+		GROUP BY style_id 
+	</select>
+	
+	<!-- 搜索内容查询接口  -->
+	<select id="search_goods" resultType="goods">
+		select MIN(g.style_id) as style_id, MIN(g.type) as type,MIN(g.goodsDetails)
+		as goodsDetails,MIN(g.goodsLabel) as goodsLabel
+		,MIN(g.goodsName) as goodsName,MIN(g.goodspic) as goodspic,
+		MIN(g.isnew) as isnew,MIN(g.price) as price,MIN(g.sex) as sex,MIN(f.Quantity) as
+		Quantity,MIN(s.short_size) as short_size,MIN(c.color_name) as
+		color_name from f002 f
+		inner join b_goods g on f.Goods_NO = g.style_id
+		INNER join b_color c on f.ColorID=c.short_color_id
+		inner join b_size s on s.short_size_class = f.Size_class
+		where g.goodsLabel like CONCAT(CONCAT('%',#{arg0}),'%') or type like
+		CONCAT(CONCAT('%',#{arg0}),'%')
+		or goodsDetails like CONCAT(CONCAT('%',#{arg0}),'%') or goodsName like
+		CONCAT(CONCAT('%',#{arg0}),'%')
+		GROUP BY style_id
+	</select>
+
+	<!-- 获取对应的商品详情信息  -->
+	<select id="goods_OneDetails"  resultType="Map">
+		select MIN(g.style_id) as style_id, MIN(g.type) as type,MIN(g.goodsDetails)
+		as goodsDetails,MIN(g.goodsLabel) as goodsLabel
+		,MIN(g.goodsName) as goodsName,MIN(g.goodspic) as goodspic, 
+		MIN(g.isnew) as isnew,MIN(g.price) as price,MIN(g.sex) as sex,MIN(f.Quantity) as
+		Quantity,MIN(s.short_size) as short_size,MIN(c.color_name) as
+		color_name from f002 f
+		inner join b_goods g on f.Goods_NO = g.style_id
+		INNER join b_color c on f.ColorID=c.short_color_id
+		left join b_size s on s.short_size_class = f.Size_class and f.Filed =
+		s.fieldname
+		where Goods_NO=#{arg0} GROUP BY style_id
+	</select>
+
+	<!-- 获取商品对应的图片详情和轮播图片  -->
+	<select  id="goods_style_pic" resultType="Map">
+		select * from style_pic  where style_no=#{arg0}
+	</select>
+
+	<!-- 获取对应款的颜色和尺码 -->
+	<select  id="get_Color_code" resultType="goods">
+		select f.*,c.color_name,s.short_size from f002 f
+			inner join b_goods  g on g.style_id = f.Goods_NO
+			inner join b_color c on f.ColorID = c.short_color_id
+			inner join b_size s on f.Filed = s.fieldname and f.Size_class = s.short_size_class
+			where style_id=#{arg0}
+	</select>
+	
+	<!-- 获取商品基础信息表 -->
+		<select  id="get_b_goods" resultType="goods">
+		select * from b_goods
+	</select>
+	
+	<insert id="insert_b_goods" parameterType="goods">
+	insert into b_goods (style_id,type,goodsName,goodsLabel,goodsDetails,goodspic,yearseason,isnew,sex,price,short_goodslabel)
+	 VALUES (#{style_id},#{type},#{goodsName},#{goodsLabel},#{goodsDetails},
+	 #{goodspic},#{yearseason},#{isnew},#{sex},#{price},#{short_goodslabel})
+	</insert>
+	
+	<select id="get_styleidcolor"   parameterType="String" resultType="Map">
+		select f.* from b_goods bg 
+			inner join f002 f on bg.style_id =f.Goods_NO
+			where style_id=#{arg0} GROUP BY pic,ColorID
+	</select>
+	
+	
+	<select id="get_spec_parameter"  resultType="Spec_parameter">
+		select * from spec_parameter where goods_id=#{arg0}
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html>
+<head> 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ 	 <meta charset="UTF-8">
+    <!-- meta使用viewport以确保页面可自由缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 引入 jQuery Mobile 样式 -->
+    <link rel="stylesheet" href="http://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
+    <!-- 引入 jQuery 库 -->
+    <script src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <!-- 引入 jQuery Mobile 库 -->
+    <script src="http://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<script> 
+   $(document).ready(function(){
+	   console.log(localStorage.getItem("isadmin")=='true')
+	    if(localStorage.getItem("isadmin")=='true'){
+	    	$("#regi").hide();
+	   }  else{
+		   $("#regis").hide();
+		   $("#ckpl").hide();
+	   }
+	   
+	   $( "#register" ).click(function(){
+		   $.ajax({
+		        url: "/aip_wechat/getoneuser",
+		        type: 'POST',
+		        data: {
+		        	useraccount:$("#useraccount").val(),
+		        	userpassword:$("#userpassword").val(),},
+		  			contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+		        	dataType: 'json',
+		        success: function(result){
+		            if(result.length!=0){
+		            	localStorage.setItem("isadmin", 'true');
+		            	 window.location.href = "http://192.168.43.217:8080/aip_wechat/onediscuss.html";	         	
+		            }else{
+		            	localStorage.setItem("isadmin", 'false');
+		            	alert("不是管理员身份，请重试")
+		            }
+		        },
+		        error:function (result) {
+		           console.log("error="+result);
+		        }
+		    }, 'json');
+		   
+		   
+		});
+	   
+	   $("tuichu").click(function(){
+		   localStorage.setItem("isadmin", 'false');
+		   window.location.href = "http://192.168.43.217:8080/aip_wechat/one_home.html";
+	   })
+	   
+	   $("#fanhui").click(function () {
+			window.location.href = "http://192.168.43.217:8080/aip_wechat/one_home.html";	
+		})
+		
+		
+		 $("#ckpl").click(function () {
+			 window.location.href = "http://192.168.43.217:8080/aip_wechat/onediscuss.html";	     
+		})
+		
+		 $("#aa").click(function () {
+			 localStorage.setItem("isadmin", 'false');
+			   window.location.href = "http://192.168.43.217:8080/aip_wechat/one_home.html";
+		})
+		
+			
+   })
+  </script>
+</head>
+<body>
+  	<div data-role="page" id="pageLogin">
+
+    <div data-role="header">
+        <h1 role="heading">欢迎登陆</h1>
+        
+    </div>
+	<div style="width:100%;height:30px;background-color:#f0f0f0;" id="fanhui">返回</div>
+    <div data-role="main" class="ui-content">
+        <form method="get" action="" id="regi">
+
+            <div class="ui-field-contain">
+                <label for="name">姓名:</label>
+
+                <input type="text" name="name" id="useraccount">
+
+                <br/>
+
+                <label for="password">密码:</label>
+
+                <input type="password" name="password" id="userpassword">
+                <div style="margin-top: 20%;">
+                    <a   data-role="button" id="register" data-transition="flow">登录</a> 
+                   
+                </div>
+            </div>
+
+        </form> 
+         <button   id="ckpl" >查看评论</button>  
+          <button   id="aa">退出</button> 
+    </div>
+
+    <div data-role="footer" style="text-align: center"  data-position="fixed">
+        <p>CopyRight &copy;koastal</p>
+    </div>
+
+</div>
+  
+</body>
+</html>

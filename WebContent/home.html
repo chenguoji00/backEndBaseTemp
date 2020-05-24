@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=7200" />
+ <meta http-equiv="Expires" content="Mon, 20 Jul 2013 23:00:00 GMT" />
+<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+<link rel="stylesheet" href="https://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+<script>
+  $(function() {
+    $( "#tabs" ).tabs();
+  });
+  $(function() {
+    $( "#accordion" ).accordion();
+  });
+  
+$(document).ready(function(){ 
+	console.log("denglu",localStorage.getItem("isadmin"));
+	if(localStorage.getItem("isadmin")==1){
+		$.ajax({
+	        url: "/aip_wechat/get_comment",
+	        type: 'POST',
+	        data: {},
+	  contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(result){
+	            console.log("success"+result);
+	            console.log("stringify:"+JSON.stringify(result)); 
+	            var newDate = new Date();
+	            
+	            var lbt = '<div style="width:100%;height:40px;background-color:white;color:blue;">' +
+				'<span class="rmb-symbol"><em>' + '评论内容' + '</em></span>' + 
+				'</div>' ;
+	            
+				for (var i = 0; i < result.length; i++) {
+					newDate.setTime(result[i].create_time * 1000);
+					result[i].create_time=newDate.toLocaleString()
+					lbt += 
+						'<div style="width:100%;height:40px;background-color:white;color:blue;">' +
+						'<span class="rmb-symbol"><em>' + result[i].content + '</em></span>' + 
+						'</div>' ;
+				}
+				$("#thedata").empty()
+				$("#thedata").append(lbt); 
+				
+	        },
+	        error:function (result) {
+	           console.log("error="+result);
+	            alert("error="+result);
+	        },
+	        fail:function (result) {
+	            console.log("fail"+result);
+	            alert("fail="+result);
+	        }
+	    }, 'json');
+		} 
+	//评论
+	$("#btnn").click(function () {
+	$.ajax({
+        url: "/aip_wechat/insertcomment",
+        type: 'POST',
+        data: {content:$("#name").val()},
+  contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+        dataType: 'json',
+        success: function(result){
+            console.log("success"+result);
+            console.log("stringify:"+JSON.stringify(result)); 
+            window.location.reload();
+        },
+        error:function (result) {
+           console.log("error="+result);
+            alert("error="+result);
+        },
+        fail:function (result) {
+            console.log("fail"+result);
+            alert("fail="+result);
+        }
+    }, 'json');
+	}) 
+	
+	//请求数据
+  $("#bbb").click(function(){
+    var obj = JSON.stringify({'company': "EI",'pwd': "123",'user': "admin"});
+       alert(obj);
+    //console.log("data"+JSON.stringify(datas));
+    $.ajax({
+        url: "/aip_wechat/getgjtest",
+        type: 'POST',
+        data: '',
+		contentType: 'application/json;charset=UTF-8',
+        dataType: 'json',
+        success: function(result){
+            console.log("success"+result.name);
+            console.log("stringify:"+JSON.stringify(result));   
+            
+            
+            var lbt = "";
+			for (var i = 0; i < result.length; i++) {
+				lbt += '<li>' + 
+					'<div class="Carprice">' +
+					'<span class="rmb-symbol"><em>&yen;' + result[i].name+ '</em>万</span>' +
+					'</div>' +
+					'</li>';
+			}
+			$("#ccc").empty()
+			$("#ccc").append(lbt);
+            
+            
+            
+        },
+        error:function (result) {
+           console.log("error="+result);
+            alert("error="+result);
+        },
+        fail:function (result) {
+            console.log("fail"+result);
+            alert("fail="+result);
+        }
+    }, 'json');
+  });
+	//登陆 
+		    $( "#registeraa").click(function(){
+				window.location.href = "http://192.168.43.217:8080/aip_wechat/denglu.html";
+			});
+	
+		  //最爱的书 
+		    $( "#mylovebook").click(function(){
+				window.location.href = "http://192.168.43.217:8080/aip_wechat/lovebook.html";
+			});
+		  
+		  //印象深刻的人
+		    $( "#impressivePeople").click(function(){
+				window.location.href = "http://192.168.43.217:8080/aip_wechat/impressivePeople.html";
+			});
+			 //动漫
+		    $( "#mylovecomics").click(function(){
+				window.location.href = "http://192.168.43.217:8080/aip_wechat/mylovecomics.html";
+			});
+});
+
+  $(function() {
+    $( "#ccca" ).click(function(){
+		window.location.href = "http://chendong00.top/static/img/zhanshen.html";
+	});
+  });
+   
+
+$(function(){
+	$("#myexperience").click(function(){
+	window.location.href = "http://192.168.43.217:8080/aip_wechat/myexperience.html";
+	})
+
+})
+
+$(document).click(function(){
+
+	$("#btnna").click(function(e){
+		var params = {"content":$("#name").val()}
+		 console.log(params,"wwww")
+		 
+		 $.ajax({
+        url: "/aip_wechat/insertcomment",
+        type: 'POST',
+        data: params,
+		contentType: 'application/json;charset=UTF-8',
+        dataType: 'json',
+        success: function(result){
+        	window.location.reload();
+            console.log("success"+result,"baidua a a a");
+            console.log("stringify:"+JSON.stringify(result));   
+           
+            
+        },
+        error:function (result) {
+           console.log("error="+result);
+            alert("error="+result);
+        },
+        fail:function (result) {
+            console.log("fail"+result);
+            alert("fail="+result);
+        }
+    }, 'json');
+		 window.location.reload()
+	});
+	
+	
+	
+	  
+}); 
+  </script>
+</head>
+<body style="background-white;">
+
+<div data-role="page1" id="pageone">
+  <div data-role="panel" style="width:60%;height:100%;background-color:black;color:yellow;" id="myPanel"> 
+    <h2>个人信息</h2>
+    <p>我是来自东莞理工学院城市学院软件工程专业的学生，这是我的个人介绍。</p>
+      <h3>联系方式： 23333333333 qq：1401179159</h3>
+  </div> 
+
+   <div data-role="header">
+	    <h1 >欢迎来到我的主页</h1> <a href="#myPanel" class="ui-btn ui-btn-inline ui-corner-all ui-shadow">个人信息</a>
+		
+	  </div>
+
+  <div data-role="main" class="ui-content">
+     <div data-role="main" class="ui-content"> 
+		<span style="display:flex;justify-content:center;align-items: center; ">这是一个我喜爱的地方</span>
+	  </div>
+	  <div id="ccc"></div>
+	    <button style="background-color:white;border-radius:25px;"  class="ui-btn ui-icon-home ui-btn-icon-left"  id="myexperience">我的成长经历</button>
+	    <div style="background-color:white;border-radius:25px;"  class="ui-btn ui-icon-heart ui-btn-icon-left" id="mylovebook">我喜欢的一本书</div>  
+	    <div style="background-color:white;border-radius:25px;"   class="ui-btn ui-icon-cloud ui-btn-icon-left" id="mylovecomics">我喜欢的动漫</div>  
+	    <div style="background-color:white;border-radius:25px;"   id="impressivePeople" class="ui-btn ui-icon-comment ui-btn-icon-left">不同人生阶段的最有印象的人</div> 
+	    <button class="ui-btn" id="registeraa">登陆</button> 
+	  <div data-role="collapsible">
+	      <h1>点击我进行评论哦！</h1> 
+	      <input type="text" name="name" id="name"/>
+	
+	 	<button style="background-color:white;border-radius:25px;" id="btnn">评论</button>
+	    </div>
+	
+	     <div id="thedata"></div>
+   
+   <image src="https://cdzhongdan.oss-cn-shenzhen.aliyuncs.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191107162034.png" style='width:100%;height:150px;'></image>
+  </div>
+ 
+</div> 
+
+</body>
+</html>

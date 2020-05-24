@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8">
+ <meta http-equiv="Cache-Control" content="max-age=7200" />
+ <meta http-equiv="Expires" content="Mon, 20 Jul 2013 23:00:00 GMT" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<title>我推荐的音乐
+</title>
+<script> 
+$(document).ready(function(){
+	   $.ajax({
+	        url: "/aip_wechat/getsomelist",
+	        type: 'GET',
+	        data: "maintype=5",
+			contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(result){ 
+	        	if(result.length!=0){
+	        		var tempArr = [];
+	        		var afterArr=[]; 
+		            for (let i = 0; i < result.length; i++) {
+		              if (tempArr.indexOf(result[i].mainclass) === -1) {
+		            	  afterArr.push({
+		            		  mainclass: result[i].mainclass,
+		            		  maindescribe:result[i].maindescribe,
+		            		  mainname:result[i].mainname,
+		            		  origin: [result[i]] ,
+		                });
+		                tempArr.push(result[i].mainclass);
+		              } else {
+		                for (let j = 0; j < afterArr.length; j++) {
+		                  if (afterArr[j].mainclass == result[i].mainclass) {
+		                	  afterArr[j].origin.push(result[i]);
+		                    break;
+		                  }
+		                }
+		              }
+		            }
+	        	}
+	              var lbt = "";
+				for (var i = 0; i < afterArr.length; i++) {
+					lbt +=
+						'<div>' +
+						'<span style="font-size:20px;font-weight:bolder;"><em>' + afterArr[i].mainname+ '</em>    </span>' +
+						'<div style="font-size:20px;padding-left:25px;"><em>' + result[i].maindescribe+ '</em>    </div>' +
+						'</div>' 
+						for(var j=0;j<afterArr[i].origin.length;j++){
+							lbt +=
+								'<div style="width:100%;height:100px;">' +
+								"<audio controls  src=\""+result[i].url+"\">"+
+								'</div>' 
+						}
+						$("#jinyan").empty()
+						$("#jinyan").append(lbt);
+				}   
+				console.log(result[0].mainname,"this is onemain.html result");
+	        },
+	        error:function (result) {
+	           console.log("error="+result);
+	            alert("error="+result);
+	        },
+	        fail:function (result) {
+	            console.log("fail"+result);
+	            alert("fail="+result);
+	        }
+	    }, 'json');
+		   
+		   
+	   $("#fanhui").click(function () {
+			window.location.href = "http://192.168.43.217:8080/aip_wechat/one_home.html";	
+		})
+   }) 
+  </script>
+  
+  <style type="text/css">
+p {
+font-size: 1.5em;
+font-weight: bold;
+}
+#submit{
+float:center; margin:10px;
+}
+/*#toregist{
+float:left; margin:10px;
+}*/
+</style>
+</head>
+<body>
+<div data-role="header">
+    <h1>我推荐歌曲</h1>
+  </div>
+<div style="width:100%;height:30px;background-color:#f0f0f0;" id="fanhui">返回</div>
+  <div data-role="main" class="ui-content">
+     <div id="jinyan"></div>
+  </div>
+
+  <div data-role="footer">
+    <h1>底部文本</h1>
+  </div>
+
+
+
+ 
+</body>
+</html>

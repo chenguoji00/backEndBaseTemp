@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<script>
+$(document).ready(function(){
+	 
+	 $.ajax({
+	        url: "/aip_wechat/getonecomment",
+	        type: 'POST',
+	        data: '',
+	  			contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+	        	dataType: 'json',
+	        success: function(con){
+	            var html = '';
+	            $.each(con, function (k, v) {  // 这里的函数参数是键值对的形式，k代表键名，v代表值
+	                html += '<li class="shopBox">' +
+	                    '<div class="ShopListName">' + con[k].onecomment + '</div>' +
+	                    '</li>'
+	            });
+	            $("#index").append(html);
+	            
+	            
+	            
+	        },
+	        error:function (result) {
+	           console.log("error="+result);
+	        }
+	    }, 'json');
+	 
+	 
+	 $("#fanhui").click(function () {
+			window.location.href = "http://192.168.43.217:8080/aip_wechat/one_home.html";	
+		})
+	
+})
+
+
+
+</script>
+<body>
+
+<div data-role="page" id="pageone">
+  <div data-role="main" class="ui-content">
+<div style="width:100%;height:30px;background-color:#f0f0f0;" id="fanhui">返回</div>
+	<div id="index"></div>
+ 
+    
+     
+   
+  </div>
+</div> 
+
+</body>
+</html>

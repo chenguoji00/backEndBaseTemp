@@ -1,0 +1,23 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wechat.dao.basicGoodsDao">
+
+<!-- 批量删除 -->
+    <delete id="delete_b_goods" parameterType="java.util.List">
+      DELETE FROM b_goods where style_id in
+        <foreach item="id" collection="list" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+	<select id="get_somegoods" parameterType="String" resultType="goods">
+		select * from b_goods where goodsLabel like CONCAT(CONCAT('%',#{arg0}),'%')
+	</select>
+	
+	<update  id="update_basicgoods" parameterType="goods">
+		update b_goods 
+		SET type=#{type},goodsLabel=#{goodsLabel},goodsDetails=#{goodsDetails},goodspic=#{goodspic},yearseason=#{yearseason},
+		isnew=#{isnew},sex=#{sex},price=#{price},short_goodslabel=#{short_goodslabel} where style_id=#{style_id}
+	</update>
+	
+</mapper>

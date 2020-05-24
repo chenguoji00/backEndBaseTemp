@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>登录页面</title>
+  <link rel="stylesheet" href="themes/Bootstrap.css">
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile.structure-1.4.0.min.css" />
+  <link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+  <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
+		
+	</head>
+	<script>
+	
+	$(document).ready(function(){
+		   $("#dengluyemian").click(function () {//登录
+			   window.location.href = "http://192.168.43.176:8090/hdy222/denglu.html";
+			})
+			$("#experience").click(function(){//我的生活经验
+				window.location.href = "http://192.168.43.176:8090/hdy222/myexperience.html";
+			})
+			$("#mylovecomics").click(function(){//我的推荐的动漫
+				window.location.href = "http://192.168.43.176:8090/hdy222/mylovecomics.html";
+			})
+			$("#impressivePeople").click(function(){//我的推荐的动漫
+				window.location.href = "http://192.168.43.176:8090/hdy222/impressivePeople.html";
+			})
+			$("#lovebook").click(function(){//我的推荐的动漫
+				window.location.href = "http://192.168.43.176:8090/hdy222/lovebook.html";
+			})
+			if(localStorage.getItem("isadmin")==1){
+				$.ajax({
+			        url: "/hdy222/get_comment",
+			        type: 'POST',
+			        data: {},
+			  contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+			        dataType: 'json',
+			        success: function(result){
+			            console.log("success"+result);
+			            console.log("stringify:"+JSON.stringify(result)); 
+			            var newDate = new Date();
+			            
+			            var lbt = '<div style="width:100%;height:40px;background-color:white;color:blue;">' +
+						'<span class="rmb-symbol"><em>' + '评论内容' + '</em></span>' + 
+						'</div>' ;
+			            
+						for (var i = 0; i < result.length; i++) {
+							newDate.setTime(result[i].create_time * 1000);
+							result[i].create_time=newDate.toLocaleString()
+							lbt += 
+								'<div style="width:100%;height:40px;background-color:white;color:blue;">' +
+								'<span class="rmb-symbol"><em>' + result[i].content + '</em></span>' + 
+								'</div>' ;
+						}
+						$("#thedata").empty()
+						$("#thedata").append(lbt); 
+						
+			        },
+			        error:function (result) {
+			           console.log("error="+result);
+			            alert("error="+result);
+			        },
+			        fail:function (result) {
+			            console.log("fail"+result);
+			            alert("fail="+result);
+			        }
+			    }, 'json');
+				} 
+			//评论
+			$("#pinlunbutton").click(function () {
+			$.ajax({
+		        url: "/hdy222/insertcomment",
+		        type: 'POST',
+		        data: {content:$("#name").val()},
+		  contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+		        dataType: 'json',
+		        success: function(result){
+		            console.log("success"+result);
+		            console.log("stringify:"+JSON.stringify(result)); 
+		            window.location.reload();
+		        },
+		        error:function (result) {
+		           console.log("error="+result);
+		            alert("error="+result);
+		        },
+		        fail:function (result) {
+		            console.log("fail"+result);
+		            alert("fail="+result);
+		        }
+		    }, 'json');
+			}) 
+	})
+	
+	</script>
+	<body>
+		<div data-role="page" data-theme="a">
+		<div data-role="panel" id="myPanel"> 
+		    <h2>面板头部</h2>
+		    <p>你可以通过点击面板外部区域或按下 Esc 键或滑动来关闭面板。</p>
+		  </div> 
+			<div data-role="header" data-position="inline">
+			 <a href="#myPanel" style="background-color:black;color:white;"  class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">个人信息</a>
+				<h1>我的伙伴</h1>
+				<div data-role="navbar">
+					<ul>
+						<li><a href="home_index.html" data-icon="home" class="ui-btn-active">主页</a></li>
+						<li><a id="dengluyemian" data-icon="star">登录</a></li> 
+					</ul>
+				</div>
+			</div>
+			<div data-role="content" data-theme="a"> 
+			<span style="padding-left:30%;"></span><image src="https://cdzhongdan.oss-cn-shenzhen.aliyuncs.com/onebyone/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191111211106.png"></image>
+				<h2 style="width:100;display:flex;justify-content:center;align-items:center;">我的口号是：我爱学习我骄傲</h2>
+				<p>
+					 <div style="width:100;display:flex;justify-content:space-around;align-items:center;">
+					 <div style="width:49%;"><div style="background-color:black;color:white;"  class="ui-btn ui-icon-home ui-btn-icon-right"  id="experience">我的生活经历</div></div>
+					 <div style="width:49%;"><div style="background-color:black;color:white;"  class="ui-btn ui-icon-heart ui-btn-icon-right" id="mylovecomics">值得推荐的的动漫</div>  </div>
+					 
+					  
+					 </div>
+					 
+					   <div style="width:100;display:flex;justify-content:space-around;align-items:center;">
+					   
+					   <div style="width:49%;"><div style="background-color:black;color:white;"   class="ui-btn ui-icon-cloud ui-btn-icon-right" id="impressivePeople">印象中的人或物</div>  </div>
+					 <div style="width:49%;">					    <div style="background-color:black;color:white; "   id="lovebook" class="ui-btn ui-icon-comment ui-btn-icon-right">值得推荐的书</div> </div>
+					   </div>
+					   
+					    <div style="width:100%;height:30px;"></div>
+
+					 <div data-role="collapsible">
+						 <h1>点击我进行评论哦！</h1> 
+						 <input type="text" name="name" id="name"/>
+						 <button style="background-color:white;border-radius:25px;" id="pinlunbutton">评论</button>
+					 </div>
+					<div id="thedata"></div>
+					
+					<image style="width:100%;height:150px;"  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1574169639&di=e76680adefbfd33a9606e20d5348097f&imgtype=jpg&er=1&src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F10517650313%2F1000.jpg
+					"/>
+				</p>
+
+			</div>
+		</div>
+	</body>
+</html>

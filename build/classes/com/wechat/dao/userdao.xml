@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wechat.dao.userdao">
+	<select id="select_one" resultType="user">
+		select * from u_user
+		where
+		nickName like CONCAT(CONCAT('%',#{_parameter}),'%')
+	</select>
+
+	<select id="select_openiduser" resultType="user">
+		select * from u_user
+		where openid =#{openid}
+	</select>
+
+	<delete id="delete_u_user" parameterType="java.util.List">
+		DELETE FROM u_user where openid in
+		<foreach item="openids" collection="list" open="(" close=")"
+			separator=",">
+			#{openids}
+		</foreach>
+	</delete>
+
+	<insert id="add_user" parameterType="user">
+		insert into u_user
+		(openid,nickName,avatarUrl,province,city,gender)
+		VALUES
+		(#{openid},#{nickName},#{avatarUrl},#{province},#{city},#{gender})
+	</insert>
+
+
+	<!--修改用户金额 当用户余额需要增加的时候触发 -->
+	<update id="update_user" parameterType="user">
+		update u_user SET
+		balance=balance+#{balance} where openid=#{openid}
+	</update>
+
+	<!--修改用户金额 当用户购买了商品的时候触发 用于减少用户余额 -->
+	<update id="update_del_user" parameterType="user">
+		update u_user SET
+		balance=balance-#{balance} where openid=#{openid}
+	</update>
+
+	<select id="get_malefemaleratio" resultType="Map">
+		select count(*) as total,
+		sum(case when u.gender=0 then 1 else 0 end) as
+		female ,
+		sum(case when u.gender=0 then 1 else 0 end ) *1.0*100 /count(*) AS girl,
+		sum(case when u.gender=1 then 1 else 0 end) male,
+		sum(case when u.gender=1 then 1 else 0 end)*1.0*100 /count(*) as boy
+		from
+		u_user u
+	</select>
+
+
+	<select id="get_Differentregions" resultType="Map">
+		SELECT
+		city,
+		count(1) AS counts
+		FROM
+		u_user
+		GROUP BY
+		city
+	</select>
+
+	<update id="update_visit_num" parameterType="user">
+		update u_user SET
+		visits_num =visits_num+1 where openid=#{openid}
+	</update>
+
+
+	<select id="haveopenid" resultType="user">
+		SELECT
+		*
+		FROM
+		u_user where openid=#{arg0}
+
+	</select>
+
+</mapper>

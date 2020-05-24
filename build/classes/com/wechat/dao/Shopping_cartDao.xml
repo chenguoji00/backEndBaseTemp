@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wechat.dao.Shopping_cartDao">
+	<select id="get_ShoppingCartData" resultType="Map" >
+		select sc.*,u.nickName,bc.color_name,bs.short_size,bg.price,f.pic,bg.goodsLabel
+		from b_shoppingcart sc
+		INNER JOIN u_user u on sc.u_id = u.openid
+		inner join b_color bc on bc.short_color_id= sc.colorId
+		inner join b_size bs on bs.fieldname= sc.Filed and bs.short_size_class =sc.size_class
+		INNER JOIN b_goods bg on bg.style_id = sc.goods_id
+		inner join f002 f on f.Filed=sc.Filed and f.Goods_NO = sc.goods_id and f.Size_class = sc.size_class and f.ColorID =sc.colorId
+		where sc.u_id = #{arg0}
+GROUP BY goods_id,colorId,color_name,short_size
+	</select>
+	
+	<select id="get_ShoppingCartData1" resultType="Map" >
+		select sc.*,u.nickName,bc.color_name,bs.short_size,bg.price,f.pic,bg.goodsLabel
+		from b_shoppingcart sc
+		INNER JOIN u_user u on sc.u_id = u.openid
+		inner join b_color bc on bc.short_color_id= sc.colorId
+		inner join b_size bs on bs.fieldname= sc.Filed and bs.short_size_class =sc.size_class
+		INNER JOIN b_goods bg on bg.style_id = sc.goods_id
+		inner join f002 f on f.Filed=sc.Filed and f.Goods_NO = sc.goods_id and f.Size_class = sc.size_class and f.ColorID =sc.colorId
+		where sc.u_id like CONCAT(CONCAT('%',#{arg0}),'%')
+GROUP BY goods_id,colorId
+	</select>
+
+	<insert id="insert_shoppingcart" parameterType="Shopping_cart">
+		insert into b_shoppingcart (u_id,goods_id,colorId,Filed,size_class,num)   VALUES  (#{u_id},#{goods_id},#{colorId},#{Filed},#{size_class},#{num})
+	</insert>
+	
+	
+	<select id="get_ShoppingCartifexist" resultType="Shopping_cart">
+	select * from b_shoppingcart where u_id=#{u_id} and goods_id=#{goods_id} and colorId=#{colorId} and Filed=#{Filed} and size_class=#{size_class}
+	</select>
+	
+	
+	
+	<select id="get_shoppingcartData2" resultType="Map">
+		select bs.*,uu.nickName,bg.goodsLabel,bc.color_name,bsize.short_size,bg.price,f002.pic
+ from b_shoppingcart bs  
+inner join b_goods bg on bg.style_id = bs.goods_id 
+inner join b_color bc on bc.short_color_id= bs.colorId 
+inner join b_size bsize on bsize.fieldname=bs.Filed and bsize.short_size_class = bs.size_class
+inner join u_user uu on uu.openid = bs.u_id  
+inner join f002 on f002.Goods_NO = bs.goods_id  and f002.Filed = bs.Filed and f002.Size_class = bs.size_class and f002.ColorID=bs.colorId
+
+	</select>
+	
+	<update  id="update_shoppingcart" parameterType="Shopping_cart">
+		update b_shoppingcart SET num=#{num} where u_id=#{u_id} and goods_id=#{goods_id} and colorId=#{colorId} and Filed=#{Filed} and size_class=#{size_class}
+	</update>
+	
+	<update  id="update_shoppingcartNum" parameterType="Shopping_cart">
+		update b_shoppingcart SET num=#{num} where id=#{id}
+	</update>
+	
+	 <delete id="delete_shopping_cart" parameterType="String">
+      DELETE FROM b_shoppingcart where id = #{id}
+    </delete>
+    
+  
+
+	
+	<delete id="delete_shopping_cart_bylist" parameterType="java.util.List">
+     DELETE FROM b_shoppingcart where id  in
+        <foreach item="id" collection="list" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <select id="getstockisno" resultType="Map">
+    	select f.Quantity>#{Quantity} as isno from f002 f where f.ColorID=#{ColorID} and f.Filed=#{Filed} and f.Goods_NO=#{style_id} 
+    	
+    </select>
+    
+    
+
+    
+    
+    
+    
+    
+    
+</mapper>
