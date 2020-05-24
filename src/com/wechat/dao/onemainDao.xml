@@ -1,8 +1,0 @@
- <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wechat.dao.onemainDao">
-	<select id="getsomelist" resultType="onemain">
-		select * from sub a right JOIN main b
-		 on a.subclass=b.mainclass where b.maintype=#{maintype}
-	</select>
-</mapper>
